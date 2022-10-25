@@ -14,6 +14,7 @@ export type Optional<T> = Partial<T>
 export type EntityProps<T> = T & {
   id?: string
   createdAt?: Date
+  updatedAt?: Date
 }
 
 export type Relation<T> = Partial<Relationship<T>>
