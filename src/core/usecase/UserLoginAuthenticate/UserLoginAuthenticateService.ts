@@ -7,11 +7,9 @@ import { User } from '../../domain/entities/User';
 import { Authorization } from '../../../base/abstract/Authorization';
 import { UserRepository } from './../../repositories/UserRepository';
 import { RefreshTokenRepository } from './../../repositories/RefreshTokenRepository';
-import { AuthenticateRepository } from './../../repositories/AuthenticateRepository';
 interface Repositories {
   user: UserRepository,
   refreshToken: RefreshTokenRepository,
-  authenticate: AuthenticateRepository
 }
 interface Services {
   userCreate: UserCreateService

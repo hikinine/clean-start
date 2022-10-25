@@ -7,6 +7,8 @@ import { RefreshToken } from './UserRefreshToken';
 import { EntityProps, Relation, Unique, Many } from '../interface/entities.contract';
 
 export class User extends Entity implements EntityLayer<UserProps> {
+  static DEFAULT_EXPIRES_IN = "12h"
+  
   readonly refreshToken?: RefreshToken
 
   id: string
@@ -49,9 +51,6 @@ export class User extends Entity implements EntityLayer<UserProps> {
     return Boolean(this?.refreshToken?.id)
   }
 
-
-
-  static DEFAULT_EXPIRES_IN = "12h"
 }
 
 

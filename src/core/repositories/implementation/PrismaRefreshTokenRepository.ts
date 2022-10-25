@@ -2,11 +2,8 @@ import { RefreshToken } from './../../domain/entities/UserRefreshToken';
 import { RefreshTokenRepository } from '../RefreshTokenRepository';
 import { QueryNotFound } from '../../../base/errors/QueryNotFound';
 import { PrismaClient } from '@prisma/client';
-
 export class PrismaRefreshTokenRepository implements RefreshTokenRepository {
-  // eslint-disable-next-line no-use-before-define
   private static instance: PrismaRefreshTokenRepository;
-
   private contextPrisma: PrismaClient
   private constructor(contextPrisma: PrismaClient) {
     this.contextPrisma = contextPrisma

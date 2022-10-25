@@ -1,3 +1,4 @@
+import { UserAuthenticate } from './../UserAuthenticate';
 
 import { RefreshToken } from '../UserRefreshToken';
 import { UnprocessableEntityException } from './../../../../base/errors/UnprocessableEntityException';
@@ -58,9 +59,9 @@ describe("Entidade do domínio -> USER", () => {
     );
   });
 
- 
+
   it("Testar possiveis relacionamentos", () => {
-    const [userId] = [v4(), v4()]
+    const [userId] = [v4()]
 
     const user = new User({
       ...EntityFactory.UserValid({
@@ -178,20 +179,20 @@ describe("Entidade do domínio -> USER", () => {
   })
 
   it("Verifica generateUserSignInPayload", () => {
-    const user = new User(EntityFactory.UserValid())
+    const user = new User(EntityFactory.UserValid());
+    const authenticate = new UserAuthenticate(user, { expiresIn: User.DEFAULT_EXPIRES_IN });
+    const { accessToken, payload } = authenticate;
 
-    const { options, payload } = user.generateUserSignInPayload({ expiresIn: User.DEFAULT_EXPIRES_IN })
+    expect(payload.id).toBeDefined();
+    expect(validateUUID(payload.id)).toBeTruthy();
+    expect(typeof payload.privilege).toEqual("number");
+    expect(typeof payload.role).toEqual("number");
 
-    expect(payload.id).toBeDefined()
-    expect(validateUUID(payload.id)).toBeTruthy()
-    expect(typeof payload.privilege).toEqual("number")
-    expect(typeof payload.role).toEqual("number")
-
-    expect(options.subject).toBeDefined()
-    expect(validateUUID(options.subject)).toBeTruthy()
-    expect(options.subject).toEqual(payload.id)
-    expect(options.expiresIn).toEqual(User.DEFAULT_EXPIRES_IN)
-
+    const decoded = authenticate.decodeIn(accessToken)
+    expect(decoded.sub).toEqual(user.id)
+    expect(decoded.id).toEqual(user.id)
+    expect(decoded.privilege).toEqual(user.privilege)
+    expect(decoded.role).toEqual(user.role)
   })
 
 })

@@ -1,8 +1,5 @@
 import { User } from './User';
-import { Entity } from "../../../base/abstract/Entity"
-import { EntityProps, NonRelationship } from "../interface/entities.contract"
-import { randomBytes } from 'crypto';
-import { SignOptions, sign, decode, verify, JwtPayload } from 'jsonwebtoken';
+import { sign, decode, verify, JwtPayload } from 'jsonwebtoken';
 import { AuthenticationException } from '../../../base/errors';
 import { config } from '../../../shared/infra/config';
 export class UserAuthenticate {

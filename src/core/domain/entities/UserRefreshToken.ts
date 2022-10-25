@@ -9,7 +9,7 @@ export class RefreshToken extends Entity implements RefreshTokenProps {
 
   constructor(props: RefreshTokenProps) {
     super()
-    this.id = Entity.RequiredText(props.id, { length: [40, 50] });
+    this.id = Entity.createUUID(props.id);
     this.userId = Entity.createRequiredId(props.userId)
     this.createdAt = Entity.CreatedAt(props.createdAt)
     this.updatedAt = Entity.UpdatedAt()

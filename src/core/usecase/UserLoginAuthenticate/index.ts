@@ -4,7 +4,6 @@ import { PrismaUserRepository } from './../../repositories/implementation/Prisma
 import { UserLoginAuthenticateService } from './UserLoginAuthenticateService';
 import { UserLoginAuthenticateController } from './UserLoginAuthenticateController';
 import { PrismaRefreshTokenRepository } from '../../repositories/implementation/PrismaRefreshTokenRepository';
-import { JWTAuthenticateRepository } from '../../repositories/implementation/JWTAuthenticateRepository';
 import { prismaInstance } from './../../../shared/infra/database/prisma/client';
 
 
@@ -15,7 +14,6 @@ export const userLoginAuthenticateService = new UserLoginAuthenticateService({
   repository: {
     user: PrismaUserRepository.getInstance(prismaInstance),
     refreshToken: PrismaRefreshTokenRepository.getInstance(prismaInstance),
-    authenticate: JWTAuthenticateRepository.getInstance()
   }
 });
 

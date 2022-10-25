@@ -1,9 +1,8 @@
 import { ValidationException } from './../../../base/errors/ValidationException';
-import { Prisma } from '@prisma/client';
 import { UserRepository } from './../UserRepository';
 import { User } from './../../domain/entities/User';
 import { Many } from '../../domain/interface/contract';
-import { PrismaClient } from '@prisma/client';
+import { Prisma, PrismaClient } from '@prisma/client';
 
 export class PrismaUserRepository implements UserRepository {
   private static instance: PrismaUserRepository;
