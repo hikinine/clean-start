@@ -9,5 +9,7 @@ export const config = {
     console.log(`API Version: ${config.apiVersion}`);
   },  
 
+  MAX_FILE_SIZE_MULTER: 1024 * 1024 * 5,
+
   jwtSecretKey: process.env.JWT_SECRET_KEY || "HEWQR349SENDFENWREWIR3249234NDSFNDSFHJUEWR",
 };

@@ -11,11 +11,11 @@ export class UserAuthenticate {
     return sign(this.payload, config.jwtSecretKey, this.options)
   }
 
-  verifyIn(accessToken: string) {
+  static verifyIn(accessToken: string) {
     return verify(accessToken, config.jwtSecretKey) as JwtPayload
   }
 
-  decodeIn(accessToken: string) {
+  static decodeIn(accessToken: string) {
     const decoded = decode(accessToken, { json: true })
 
     if (!decoded)

@@ -43,7 +43,7 @@ export class UserLoginAuthenticateService extends Service<Repositories, Services
         userId: user.id
       });
 
-      await this.repository.refreshToken.createRefreshToken(refreshToken)
+      await this.repository.refreshToken.create(refreshToken)
 
       refreshTokenId = refreshToken.id
     }

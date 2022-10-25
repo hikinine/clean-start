@@ -20,7 +20,6 @@ export class UserLoginAuthenticateDTO extends DTOValidation {
 
   constructor(props: UserLoginAuthenticateDTO) {
     super(props)
-    Object.assign(this, props)
   }
 
 }

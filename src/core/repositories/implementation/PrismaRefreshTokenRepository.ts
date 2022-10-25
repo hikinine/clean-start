@@ -16,7 +16,7 @@ export class PrismaRefreshTokenRepository implements RefreshTokenRepository {
     return PrismaRefreshTokenRepository.instance;
   }
 
-  async createRefreshToken(data: RefreshToken) {
+  async create(data: RefreshToken) {
     const Query = await this.contextPrisma.refreshToken.upsert({
       where: { userId: data.userId },
       create: data,
@@ -30,7 +30,7 @@ export class PrismaRefreshTokenRepository implements RefreshTokenRepository {
     return new RefreshToken(Query)
   }
 
-  async checkRefreshToken(data: RefreshToken) {
+  async check(data: RefreshToken) {
     const Query = await this.contextPrisma.refreshToken.findMany({
       where: {
         id: data.id,
@@ -44,7 +44,7 @@ export class PrismaRefreshTokenRepository implements RefreshTokenRepository {
 
     return new RefreshToken(Query[0])
   }
-  async revokeRefreshTokenFrom(userId: string) {
+  async revokeFrom(userId: string) {
 
     const Query = await this.contextPrisma.refreshToken.delete({
       where: { userId  }

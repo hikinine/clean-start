@@ -1,20 +1,15 @@
-import { UserCreateDTO } from './UserCreateDTO';
 import { Request, Response } from 'express';
-import { UserCreateService } from './UserCreateService';
+import { UserUpdateService } from './UserUpdateService';
 import { ApplicationExceptionController } from '../../../base/ApplicationExceptionController';
-import { IsString, validateSync } from 'class-validator';
+import { UserUpdateDTO } from './UserUpdateDTO';
 
-class TesteDTO {
-  @IsString()
-  name: string
-}
-export class UserCreateController {
+export class UserUpdateController {
 
-  private service: UserCreateService;
+  private service: UserUpdateService;
   private exceptionController: ApplicationExceptionController;
 
   constructor(props: {
-    service: UserCreateService;
+    service: UserUpdateService;
     exceptionController: ApplicationExceptionController
   }) {
     this.service = props.service;
@@ -22,11 +17,14 @@ export class UserCreateController {
   }
 
   async handle(request: Request, response: Response) {
-    try {
+    try {   
+      const { } = request.params
+      const query = request.query
       
-      const dto = new UserCreateDTO(request.body)
+      const dto = new  UserUpdateDTO({...request.body, })
       const ServiceResponse = await this.service.execute(dto);
       return response.status(200).json(ServiceResponse);
+      
     } catch (error) {
       return this.exceptionController.handle(response, error)
     }

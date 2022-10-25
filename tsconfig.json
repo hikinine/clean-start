@@ -3,11 +3,14 @@
     "target": "es6",
     "module": "commonjs",
     "sourceMap": true,
-    "outDir": "dist",
     "strict": false,
     "esModuleInterop": true,
     "skipLibCheck": true,
+    
     "forceConsistentCasingInFileNames": true,
-    "experimentalDecorators": true
+    "experimentalDecorators": true,
+    
+    "outDir": "./dist",                        /* Redirect output structure to the directory. */
+    "rootDir": "./src"
   }
 }

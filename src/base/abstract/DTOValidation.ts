@@ -3,8 +3,9 @@ import { BadRequest } from "../errors"
 
 export abstract class DTOValidation {
   constructor(props: object) {
-    const error = validateSync(props)
-
+    Object.assign(this, props)
+    const error = validateSync(this)
+    
     if (error.length) {
       throw new BadRequest("Falha na validação dos campos " + error?.map(field => field?.property)?.join(", "), error)
     }

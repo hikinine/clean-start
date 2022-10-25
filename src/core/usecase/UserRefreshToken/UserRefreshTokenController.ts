@@ -1,20 +1,15 @@
-import { UserCreateDTO } from './UserCreateDTO';
 import { Request, Response } from 'express';
-import { UserCreateService } from './UserCreateService';
+import { UserRefreshTokenService } from './UserRefreshTokenService';
 import { ApplicationExceptionController } from '../../../base/ApplicationExceptionController';
-import { IsString, validateSync } from 'class-validator';
+import { UserRefreshTokenDTO } from './UserRefreshTokenDTO';
 
-class TesteDTO {
-  @IsString()
-  name: string
-}
-export class UserCreateController {
+export class UserRefreshTokenController {
 
-  private service: UserCreateService;
+  private service: UserRefreshTokenService;
   private exceptionController: ApplicationExceptionController;
 
   constructor(props: {
-    service: UserCreateService;
+    service: UserRefreshTokenService;
     exceptionController: ApplicationExceptionController
   }) {
     this.service = props.service;
@@ -23,10 +18,14 @@ export class UserCreateController {
 
   async handle(request: Request, response: Response) {
     try {
-      
-      const dto = new UserCreateDTO(request.body)
+      const { } = request.params
+      const query = request.query
+      const accessToken = request.headers.authorization?.split(" ")?.[1]
+
+      const dto = new UserRefreshTokenDTO({ ...request.body, accessToken })
       const ServiceResponse = await this.service.execute(dto);
       return response.status(200).json(ServiceResponse);
+      
     } catch (error) {
       return this.exceptionController.handle(response, error)
     }
