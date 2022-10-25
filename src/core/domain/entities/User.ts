@@ -49,19 +49,6 @@ export class User extends Entity implements EntityLayer<UserProps> {
     return Boolean(this?.refreshToken?.id)
   }
 
-  public generateUserSignInPayload(options: { expiresIn: number | string }) {
-    return {
-      payload: {
-        id: this.id,
-        privilege: this.privilege,
-        role: this.role
-      },
-      options: {
-        subject: this.id,
-        expiresIn: options.expiresIn
-      }
-    }
-  }
 
 
   static DEFAULT_EXPIRES_IN = "12h"

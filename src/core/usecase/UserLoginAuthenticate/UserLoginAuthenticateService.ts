@@ -1,3 +1,4 @@
+import { UserAuthenticate } from './../../domain/entities/UserAuthenticate';
 import { UserCreateService } from './../UserCreate/UserCreateService';
 import { RefreshToken } from './../../domain/entities/UserRefreshToken';
 import { UserLoginAuthenticateDTO } from './UserLoginAuthenticateDTO';
@@ -7,8 +8,6 @@ import { Authorization } from '../../../base/abstract/Authorization';
 import { UserRepository } from './../../repositories/UserRepository';
 import { RefreshTokenRepository } from './../../repositories/RefreshTokenRepository';
 import { AuthenticateRepository } from './../../repositories/AuthenticateRepository';
-
-
 interface Repositories {
   user: UserRepository,
   refreshToken: RefreshTokenRepository,
@@ -17,7 +16,6 @@ interface Repositories {
 interface Services {
   userCreate: UserCreateService
 }
-
 export class UserLoginAuthenticateService extends Service<Repositories, Services> {
 
   constructor(props: InjectableDependencies<Repositories, Services>) {
@@ -31,21 +29,14 @@ export class UserLoginAuthenticateService extends Service<Repositories, Services
 
   async execute(dto: UserLoginAuthenticateDTO) {
 
-    const user = await this.repository.user.findUnique(
-      {
-        where: {
-          email: dto.email
-        },
-        include: {
-          refreshToken: true
-        }
-      });
+    const user = await this.repository.user.findUnique({
+      where: { email: dto.email },
+      include: { refreshToken: true }
+    });
 
-
-    user.ensureEncryptedPasswordMatchWith(dto.password)
-    const { payload, options } = user.generateUserSignInPayload({ expiresIn: User.DEFAULT_EXPIRES_IN })
-    const accessToken = this.repository.authenticate.signIn(payload, options)
-
+    user.ensureEncryptedPasswordMatchWith(dto.password);
+    const { payload, accessToken } = new UserAuthenticate(user, { expiresIn: User.DEFAULT_EXPIRES_IN });
+    
     let refreshTokenId: string
 
     if (!user.hasRefreshToken()) {
