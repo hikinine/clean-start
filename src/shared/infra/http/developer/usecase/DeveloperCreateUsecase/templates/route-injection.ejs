@@ -1,0 +1,4 @@
+import { <%= props.controller %> } from "./../../../../modules/usecase/<%= props.useCase %>/index";
+<%= props.routesSafeCopy %>
+
+route.<%= props.method %>("<%= props.route %>", bind(<%= props.controller %>))

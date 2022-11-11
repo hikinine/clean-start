@@ -10,3 +10,5 @@ export const NUMBER = (n: number) => n?.toLocaleString("pt-br", {
   minimumFractionDigits: 2,
   maximumFractionDigits: 2
 })
+
+export const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))

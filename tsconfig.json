@@ -6,11 +6,9 @@
     "strict": false,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    
     "forceConsistentCasingInFileNames": true,
     "experimentalDecorators": true,
-    
-    "outDir": "./dist",                        /* Redirect output structure to the directory. */
+    "outDir": "./dist", /* Redirect output structure to the directory. */
     "rootDir": "./src"
   }
 }

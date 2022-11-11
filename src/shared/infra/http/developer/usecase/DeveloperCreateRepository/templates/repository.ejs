@@ -1,0 +1,17 @@
+import { Prisma } from '@prisma/client';
+import { QueryOptions } from '../../base/interface/repository';
+import { Many, Transaction, WriteOptions } from '../domain/interface/contract';
+import { <%= props.Entity %> } from './../domain/entities/<%= props.Entity %>';
+
+
+export interface <%= props.Repository %> {
+  
+  transaction<T extends unknown = any>(callback: Transaction<T>): Promise<T>
+
+  create(toCreate: <%= props.Entity %>, options?: WriteOptions): Promise<void>;
+  update(toUpdate: <%= props.Entity %>, options?: WriteOptions): Promise<void>;
+  delete(<%= props.Entity %>Id: string, options?: WriteOptions): Promise<void>;
+
+  findUnique(options: Prisma.<%= props.entity %>FindUniqueArgs, query?: QueryOptions): Promise<<%= props.Entity %>>
+  findAll(options?: Partial<Prisma.<%= props.entity %>FindManyArgs>, query?: QueryOptions): Promise<Many<<%= props.Entity %>>>
+}

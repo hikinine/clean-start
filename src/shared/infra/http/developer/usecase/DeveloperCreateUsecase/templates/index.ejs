@@ -1,0 +1,40 @@
+
+import { container } from '../../../../app';
+import { Authorization } from '../../../../base/abstract/Authorization';
+import { exceptionController } from '../../../../base/ApplicationExceptionController';
+import { <%= props.Service %> } from './<%= props.Service %>';
+import { <%= props.Controller %> } from './<%= props.Controller %>';
+<% for(var i=0; i<props.Repositories.length; i++) {%>import { <%= props.Repositories[i] %> } from './../../../repositories/<%= props.Repositories[i] %>';
+<% } %>
+
+
+export const <%= props.service %> = new <%= props.Service %>({
+  repository: {
+    <% for(var i=0; i<props.Implementation.length; i++) {%><%= props.keyRepositories[i] %>: container.resolve<<%= props.Repositories[i] %>>("<%= props.keyRepositories[i] %>"),
+    <% } %>},
+  services: {}
+});
+
+export const <%= props.controller %> =
+  new <%= props.Controller %>({
+    service: <%= props.service %>,
+    exceptionController,
+    authorization: {
+      level: Authorization.Level.Free,
+
+    }
+  }); 
+
+
+container.bind(
+  [
+    {
+      key: <%= props.Controller %>.name,
+      module: <%= props.controller %>,
+    },
+    {
+      key: <%= props.Service %>.name,
+      module: <%= props.service %>,
+    }
+  ]
+)

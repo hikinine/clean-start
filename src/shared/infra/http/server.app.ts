@@ -1,17 +1,45 @@
-import express from "express";
-import bodyParser from 'body-parser'
-
+import cors from "cors";
+import express, { Express, Router } from "express";
 import { config } from "../config";
-import { route } from "./routes/_index";
-import cors from "cors"
 
-const app = express();
-app.use((bodyParser as any).json({extended: true}));
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json({limit: '50mb'})) // and add this
-app.use(bodyParser.urlencoded({limit: '50mb'})) // and add this
-app.use(cors());
+interface InstallExpressOptions {
+  jsonLimit?: string
+  urlencoded?: boolean
+  disableCors?: boolean
+  port?: number
+  onReady?: () => void
+}
 
+class ApplicationHttpServer {
 
-app.use(config.apiVersion, route);
-app.listen(config.httpPort, config.httpOnReady);
+}
+class ExpressHttpServer extends ApplicationHttpServer {
+  public app: Express
+  public route: Router
+
+  constructor(options?: InstallExpressOptions) {
+    super()
+    const app = express();
+
+    app.set('view engine', 'ejs');
+
+    app.use(express.json({ limit: options?.jsonLimit || "50mb" }));
+    app.use(express.urlencoded({ extended: options?.urlencoded || true }));
+
+    if (!options.disableCors) {
+      app.use(cors());
+    }
+
+    app.listen(
+      options?.port || config.httpPort,
+      options?.onReady || config.httpOnReady
+    );
+
+    const route = Router({ mergeParams: true })
+    this.app = app
+    this.route = route
+  }
+}
+
+export { ApplicationHttpServer, ExpressHttpServer };
+

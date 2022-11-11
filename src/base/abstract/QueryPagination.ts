@@ -1,5 +1,5 @@
 
-import { ValidationException } from './../errors/ValidationException';
+import { ValidationException } from '../errors/ValidationException';
 
 type OrderByProps = "asc" | "desc"
 type OrderByNested = any | {
@@ -8,19 +8,17 @@ type OrderByNested = any | {
   [key: string]: OrderByProps
 }[]
 export abstract class QueryPagination {
-  query?: {
-    take?: number;
-    skip?: number;
+  take?: number;
+  skip?: number;
 
-    orderBy?: string
-    direction?: OrderByProps
+  orderBy?: string
+  direction?: OrderByProps
 
-    filter?: string
-    q?: string
-    in?: string
+  filter?: string
+  q?: string
+  in?: string
 
-    [key: string]: any
-  }
+  [key: string]: any
 
 }
 
@@ -38,14 +36,13 @@ export class Query {
       defaultOrderBy?: OrderByNested
     }
   ) {
-    const allowedKeys = ["take",`filter`, "skip", "orderBy",`defaultWhere`, `defaultOrderBy`, "direction"]
+    const allowedKeys = ["take", `filter`, "skip", "orderBy", `defaultWhere`, `defaultOrderBy`, "direction"]
 
     Object.keys(props || {}).forEach(key => {
       if (!allowedKeys.includes(key)) {
         throw new ValidationException(`Query não permitida. Key ${key} não permitida`)
       }
     })
-
     this.take = parseInt(props?.take as any) || 10
 
     if (this.take > 100)
@@ -129,9 +126,9 @@ export class QueryWithFilter<Entity> extends Query {
         return accumulator
       }, [] as any)
 
-      this.where = { 
+      this.where = {
         ...props.defaultWhere,
-        OR 
+        OR
       }
     }
     else if (props?.in || props?.q) {
@@ -143,7 +140,7 @@ export class QueryWithFilter<Entity> extends Query {
       }
     }
     else {
-      this.where = { 
+      this.where = {
         ...props.defaultWhere,
       }
     }

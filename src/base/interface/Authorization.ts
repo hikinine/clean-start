@@ -1,5 +1,4 @@
-export type ServiceAuthorizationD ={
-  role: number,
+export type ServiceAuthorizationD = {
   level: number
 }
 export interface ServiceAuthorization {

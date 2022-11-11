@@ -1,3 +1,5 @@
+import { expect } from "vitest"
+
 export const string = (k: number) => Array(k).fill("a").join("")
 
 export const defaultNonNumberValues = [
@@ -39,9 +41,9 @@ export const forceLimits = (props: {
   for (const value of valid) {
     const entityProps = { ...validEntityPayload } as typeof Entity
     entityProps[field] = value
-    const user = new Entity(entityProps)
+    const entity = new Entity(entityProps)
 
-    expect(user).toBeInstanceOf(Entity)
+    expect(entity).toBeInstanceOf(Entity)
   }
 
   for (const value of invalid) {
@@ -49,8 +51,8 @@ export const forceLimits = (props: {
 
       const entityProps = { ...validEntityPayload } as typeof Entity
       entityProps[field] = value
-      const user = new Entity(entityProps)
-      expect(user).not.toBeInstanceOf(Entity)
+      const entity = new Entity(entityProps)
+      expect(entity).not.toBeInstanceOf(Entity)
 
     } catch (error) {
       if (error instanceof Error) {

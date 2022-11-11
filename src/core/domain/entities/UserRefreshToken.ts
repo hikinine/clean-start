@@ -1,16 +1,18 @@
-import { Entity } from "../../../base/abstract/Entity"
-import { EntityProps, NonRelationship } from "../interface/entities.contract"
 import { randomBytes } from 'crypto';
+
+import { Entity } from '../../../base/abstract/Entity';
+import { EntityProps, NonRelationship } from '../interface/entities.contract';
+
 export class RefreshToken extends Entity implements RefreshTokenProps {
   id: string
-  userId: string
+  user_id: string
   createdAt: Date
   updatedAt: Date
 
   constructor(props: RefreshTokenProps) {
     super()
-    this.id = Entity.createUUID(props.id);
-    this.userId = Entity.createRequiredId(props.userId)
+    this.id = props.id || Entity.createUUID()
+    this.user_id = Entity.createRequiredId(props.user_id)
     this.createdAt = Entity.CreatedAt(props.createdAt)
     this.updatedAt = Entity.UpdatedAt()
   }
@@ -20,5 +22,5 @@ export class RefreshToken extends Entity implements RefreshTokenProps {
   }
 }
 export interface RefreshTokenProps extends EntityProps<NonRelationship> {
-  userId: string
+  user_id: string
 }

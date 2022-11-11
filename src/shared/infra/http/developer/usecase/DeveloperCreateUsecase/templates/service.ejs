@@ -1,0 +1,22 @@
+import { <%= props.DTO %> } from './<%= props.DTO %>';
+import { <%= props.USECASE %>Module } from "../<%= props.usecase %>.modules"
+import { Provider } from "../../../../base/decorators/Provider";
+import { Service, InjectableDependencies } from "../../../../base/abstract/Service"
+<% for(var i=0; i<props.Repositories.length; i++) {%>import { <%= props.Repositories[i] %> } from './../../../repositories/<%= props.Repositories[i] %>';
+<% } %>
+
+interface Repositories {
+  <% for(var i=0; i<props.Implementation.length; i++) {%><%= props.keyRepositories[i] %>: <%= props.Repositories[i] %>,
+  <% } %>
+}
+interface Services {}
+
+@Provider(<%= props.USECASE %>Module)
+export class <%= props.Service %> extends Service<Repositories, Services> {
+  constructor(props: InjectableDependencies<Repositories, Services>) {
+    super(props)
+  }
+
+  async execute(dto: <%= props.DTO %>) {
+  }
+}

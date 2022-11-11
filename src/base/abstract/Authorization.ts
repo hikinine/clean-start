@@ -1,19 +1,20 @@
-import { BaseAuthentication } from './Authentication';
-import { AuthorizationException } from '../errors/AuthorizationException';
-import { ServiceAuthorizationD } from '../interface/Authorization';
-import { Color, logger } from '../utils/colorLogger';
 
 
 export class Authorization {
-  static Role = {
-    User: 0
-  }
+
   static Level = {
-    Admin: 4,
-    Financeiro: 3,
-    Gerente: 2,
-    Basic: 1,
-    Free: 0,
+    Developer: 50,
+    Admin: 9,
+    Gerente: 7,
+    Financeiro: 4,
+    HeadOfSales: 3,
+    InsideSalesPremium: 2,
+    InsideSales: 1,
+    Free: 0
+  }
+
+  static has(privilege: number, levelRequired: number) {
+    return privilege >= levelRequired
   }
 
 }

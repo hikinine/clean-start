@@ -2,16 +2,16 @@
 import { isUUID } from "class-validator"
 import { v4 as uuid, validate as validateUUID } from "uuid"
 import { UnprocessableEntityException } from "../errors"
-import { EnumMap, EntityOptions, EntityNumberOptions, Optional } from "../interface/Entity"
+import { EntityNumberOptions, EntityOptions, EnumMap, Optional } from "../interface/Entity"
 import { exists } from "../utils/Exists"
 
-export  class Entity {
+export class Entity {
   protected setRelationship(props: unknown, RelationshipMapper: any, self: unknown) {
     Object.keys(RelationshipMapper).forEach(field => {
       if (exists(props[field])) {
 
-        self[field] = props[field]?.hasOwnProperty("length")
-          ? props[field].map((props: unknown) => new RelationshipMapper[field](props))
+        self[field] = props[field] instanceof Array
+          ? props[field].map((thisProps: unknown) => new RelationshipMapper[field](thisProps))
           : new RelationshipMapper[field](props[field])
 
 
@@ -32,13 +32,15 @@ export  class Entity {
 
   private static EnsureRegexMask(k: string, options?: EntityOptions) {
     if (options?.mask) {
-      //should implement
+      const match = k.match(options.mask)
+
+      if (!match) throw new UnprocessableEntityException(k + " está no formato errado! Espera-se receber o tipo: " + options.mask)
     }
   }
   private static EnsureLength(k: string, options?: EntityOptions) {
     if (options?.length) {
       const [min, max] = options.length.length === 1
-        ? [1, options.length[0]]
+        ? [options.length[0], options.length[0]]
         : [options.length[0], options.length[1]];
 
       const trimmed = k.trim()
@@ -50,7 +52,7 @@ export  class Entity {
   private static EnsureLengthNumber(k: number, options?: { length?: number[] }) {
     if (options?.length) {
       const [min, max] = options.length.length === 1
-        ? [1, options.length[0]]
+        ? [options.length[0], options.length[0]]
         : [options.length[0], options.length[1]];
 
       if (k < min || k > max) {
@@ -65,7 +67,8 @@ export  class Entity {
   }
 
   private static IsNumber(k: number) {
-    return typeof k === `number` && (isFinite(k)) && (!isNaN(k))
+    if (!(typeof k === `number` && (isFinite(k)) && (!isNaN(k))))
+      throw new UnprocessableEntityException(`Número não válido: ${k}`);
   }
   protected static OptionalNumber(k?: number, options?: Optional<EntityNumberOptions>) {
     if (typeof k !== "number" || isNaN(k) || !isFinite(k)) {
@@ -75,6 +78,35 @@ export  class Entity {
     }
     Entity.EnsureLengthNumber(k, options)
     return k
+  }
+  protected static Picker(k: string, options: string[]) {
+
+    Entity.IsString(k)
+
+    if (!options.includes(k))
+      throw new UnprocessableEntityException(`${k} Opção inválida selecionada. Selecione um dos valores a seguir ${options.join(", ")}`)
+
+    return k
+  }
+  protected static OptionalPicker(k: string, options: string[]) {
+    if (!k) return null
+    Entity.IsString(k)
+
+    if (!options.includes(k))
+      throw new UnprocessableEntityException(`${k} Opção inválida selecionada. Selecione um dos valores a seguir ${options.join(", ")}`)
+
+    return k
+  }
+  protected static OptionalUUID(k: string) {
+    if (!k) return null
+    if (typeof k !== "string") {
+      throw new UnprocessableEntityException(`ID Não válido`);
+    }
+    if (!validateUUID(k)) {
+      throw new UnprocessableEntityException(`ID Inválido, não é do tipo uuid.`)
+    }
+    return k
+
   }
   protected static OptionalString(k?: string, options?: Optional<EntityOptions>) {
     if (typeof k !== "string" || !k) {
@@ -96,6 +128,16 @@ export  class Entity {
     }
 
     return new Date(k)
+  }
+  protected static RequiredBuffer(k: Buffer) {
+    if (!k) {
+      throw new UnprocessableEntityException(`Expected file to be buffer`)
+    }
+
+    if (!Buffer.isBuffer(k)) {
+      throw new UnprocessableEntityException(`expected "file" to be Buffer`)
+    }
+    return k
   }
   protected static OptionalBoolean(k?: boolean, options?: Optional<{}>) {
     if (typeof k !== "boolean") {

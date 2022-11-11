@@ -1,86 +1,53 @@
-import { UnprocessableEntityException } from './errors/UnprocessableEntityException';
 import { BadRequest } from './errors/BadRequestException';
+import { UnprocessableEntityException } from './errors/UnprocessableEntityException';
 
-import { Response } from "express";
 import { BaseException } from "./abstract/Exception";
 import {
   AuthenticationException,
-  AuthorizationException,
-  PrismaClientKnownRequestError,
-  ValidationException,
-  QueryNotFound,
-  InvalidQueryException,
+  AuthorizationException, InvalidQueryException, PrismaClientKnownRequestError, QueryNotFound, ValidationException
 } from "./errors";
 
 import { Catch } from "./interface/Exception";
-import { logger, Color } from "./utils/colorLogger";
+import { Color, logger } from "./utils/colorLogger";
 
 export class ApplicationExceptionController extends BaseException {
   constructor() {
-    super();  
+    super();
   }
 
   protected AuthenticationException(C: Catch<AuthenticationException>) {
-  
-    const { response, error } = C;
-    return response.status(error.code).json(error);
+
+    return C.error
   }
   protected ValidationException(C: Catch<ValidationException>) {
-  
-    const { response, error } = C;
-    return response.status(error.code).json(error);
+
+    return C.error
   }
 
   protected InvalidQueryException(C: Catch<InvalidQueryException>) {
-    const { response, error } = C;
-    
-    return response.status(error.code).json(error);
+    return C.error
   }
 
   protected AuthorizationException(C: Catch<AuthorizationException>) {
-    const { response, error } = C;
-    return response.status(error.code).json(error);
+    return C.error
   }
   protected QueryNotFound(C: Catch<QueryNotFound>) {
-    const { response, error } = C;
-    return response.status(error.code).json(error);
+    return C.error
   }
   protected DefaultErrorInstance(C: Catch<Error>) {
-    const { response, error } = C;
-    return response.status(500).json({
-      type: "Error Default Instance",
-      code: 500,
-      message: error?.message,
-      info: error?.name
-    });
+    return C.error
   }
 
   protected PrismaClientKnownRequestError(C: Catch<PrismaClientKnownRequestError>) {
-    const { response, error } = C;
-
-    if (error.code === "P2002") {
-      return response.status(400).json({
-        type: "database",
-        code: 400,
-        message: `Falha na criação. Já existe um registro com o mesmo valor.`,
-        info: `${JSON.stringify(error?.meta)?.replace(/"/gi, " ")}`
-      });
-    }
-    return response
-      .status(422)
-      .json({
-        code: 422,
-        type: "database",
-        message: `${error.code} - Erro no processamento da entidade. ${JSON.stringify(error?.meta)?.replace(/"/gi, " ")}`,
-      })    
+    return C.error
   }
 
 
-  
 
-  handle(response: Response, error: unknown) {
+
+  handle(error: unknown) {
     const { message } = error as any
-
+    console.log(error)
     logger([
       {
         color: Color.red,
@@ -89,38 +56,38 @@ export class ApplicationExceptionController extends BaseException {
     ])
 
     if (error instanceof BadRequest) {
-      return this.AuthenticationException({ response, error });
+      return this.AuthenticationException({ error });
     }
     if (error instanceof UnprocessableEntityException) {
-      return this.AuthenticationException({ response, error });
+      return this.AuthenticationException({ error });
     }
     if (error instanceof AuthenticationException) {
-      return this.AuthenticationException({ response, error });
+      return this.AuthenticationException({ error });
     }
     if (error instanceof ValidationException) {
-      return this.ValidationException({ response, error });
+      return this.ValidationException({ error });
     }
     if (error instanceof QueryNotFound) {
-      return this.QueryNotFound({ response, error });
+      return this.QueryNotFound({ error });
     }
 
     if (error instanceof AuthorizationException) {
-      return this.AuthorizationException({ response, error });
+      return this.AuthorizationException({ error });
     }
 
     if (error instanceof InvalidQueryException) {
-      return this.InvalidQueryException({ response, error });
+      return this.InvalidQueryException({ error });
     }
 
     if (error instanceof PrismaClientKnownRequestError) {
-      return this.PrismaClientKnownRequestError({ response, error });
+      return this.PrismaClientKnownRequestError({ error });
     }
 
     if (error instanceof Error) {
-      return this.DefaultErrorInstance({ response, error });
+      return this.DefaultErrorInstance({ error });
     }
 
-    return response.status(503).json(error);
+    return error
   }
 }
 export const exceptionController = new ApplicationExceptionController()

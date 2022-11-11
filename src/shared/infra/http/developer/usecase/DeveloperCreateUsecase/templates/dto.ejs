@@ -1,0 +1,20 @@
+import { BaseAuthenticationPayload } from './../../../../base/abstract/Authentication';
+import { IsOptional, IsString, Length, IsObject, IsDefined } from "class-validator"
+import { DTOValidation } from '../../../../base/abstract/DTOValidation';
+
+export class <%= props.DTO %> extends DTOValidation {
+  @IsObject()
+  @IsDefined()
+  me: BaseAuthenticationPayload
+
+  <% if(props?.extra?.params){ %>
+  @IsString()
+  <%= props?.extra?.params || "" %>: string
+  <% } %>
+
+  constructor(props: <%= props.DTO %>) {
+    super(props)
+  }
+
+}
+

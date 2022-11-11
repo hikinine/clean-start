@@ -1,0 +1,103 @@
+import { Prisma, PrismaClient, <%= props.entity %> } from '@prisma/client';
+import { BaseRepository, Repository } from '../../../base/abstract/Repository';
+import { QueryOptions } from '../../../base/interface/repository';
+import { Many } from '../../domain/interface/contract';
+import { ValidationException } from './../../../base/errors/ValidationException';
+import { <%= props.Entity %> } from './../../domain/entities/<%= props.Entity %>';
+import { <%= props.Repository %> } from './../<%= props.Repository %>';
+
+@Repository({
+  contextPrisma: true,
+  interface: "<%= props.Repository %>"
+})
+export class <%= props.Implementation %> extends BaseRepository implements <%= props.Repository %> {
+
+  private static instance: <%= props.Implementation %>;
+  private contextPrisma: PrismaClient
+  private constructor(contextPrisma: PrismaClient) {
+    super()
+    this.contextPrisma = contextPrisma
+  }
+
+  public static getInstance(prisma: PrismaClient) {
+    if (!<%= props.Implementation %>.instance) {
+      <%= props.Implementation %>.instance = new <%= props.Implementation %>(prisma);
+    }
+    return <%= props.Implementation %>.instance;
+  }
+
+  decoder(data: <%= props.Entity %>): <%= props.entity %> {
+    return {
+    }
+  }
+
+  async transaction(callback: (tx: Prisma.TransactionClient) => Promise<any>): Promise<any> {
+    return this.contextPrisma.$transaction(callback)
+  }
+  
+  async create(data: <%= props.Entity %>, options?: WriteOptions) {
+    const context = options?.context ?? this.contextPrisma
+    const dataDecoded = this.decoder(data)
+    const Query = await context.<%= props.entity %>.create({
+      data: dataDecoded
+    })
+
+    if (!Query?.id)
+      throw new ValidationException("Falha ao registrar <%= props.entity %>.");
+  }
+  async update(data: <%= props.Entity %>, options?: WriteOptions) {
+    const context = options?.context ?? this.contextPrisma
+    const dataDecoded = this.decoder(data)
+    const query = await context.<%= props.entity %>.update({
+      where: { id: data.id },
+      data: dataDecoded
+    });
+
+    if (!query)
+      throw new ValidationException("Falha ao atualizar o <%= props.entity %>")
+  }
+  async delete(<%= props.entity %>Id: string, options?: WriteOptions) {
+    const context = options?.context ?? this.contextPrisma
+    const Query = await context.<%= props.entity %>.delete({
+      where: { id: <%= props.entity %>Id }
+    })
+
+    if (!Query)
+      throw new ValidationException("Falha ao deletar <%= props.entity %>")
+  }
+
+
+  async findAll(options?: Partial<Prisma.<%= props.entity %>FindManyArgs>, query?: QueryOptions): Promise<Many<<%= props.Entity %>>> {
+    const where = { ...options?.where }
+
+    const [payload, total] = await Promise.all([
+      this.contextPrisma.<%= props.entity %>.findMany({
+        where,
+        ...options,
+
+      }),
+      this.contextPrisma.<%= props.entity %>.count({ where })
+    ])
+
+    if (query?.raw) {
+      return { payload, total } as Many<<%= props.Entity %>>
+    }
+    return {
+      payload: payload.map($ => new <%= props.Entity %>($)),
+      total
+    };
+  }
+
+  async findUnique(options: Prisma.<%= props.entity %>FindUniqueArgs, query?: QueryOptions): Promise<<%= props.Entity %>> {
+    const data = await this.contextPrisma.<%= props.entity %>.findUnique(options)
+
+    if (!data)
+      throw new ValidationException("Não encontrei nenhum <%= props.entity %> com esse ID")
+
+    if (query?.raw) {
+      return data as <%= props.Entity %>
+    }
+
+    return new <%= props.Entity %>(data)
+  }
+}

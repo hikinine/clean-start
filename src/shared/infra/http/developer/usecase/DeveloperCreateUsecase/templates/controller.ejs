@@ -1,0 +1,26 @@
+import { BaseController, ControllerProps, InjectableController} from '../../../../base/abstract/Controller';
+import { <%= props.DTO %> } from './<%= props.DTO %>';
+import { <%= props.Service %> } from './<%= props.Service %>';
+import { Controller, <%= props.extra.method %> } from '../../../../base/decorators/Controller';
+
+@Controller()
+@<%= props.extra.method %>("<%= props.extra.path %>")
+export class <%= props.Controller %> extends BaseController<<%= props.Service %>> {
+
+  constructor(props: InjectableController<<%= props.Service %>>) {
+    super(props)
+  }
+
+  async handle({ body, <%= props.extra.params ? "params" : "" %> }: ControllerProps) {
+    try {
+      <% if (props.extra.params) { %>const { <%= props.extra.params %> } = params;<% } %>
+      const dto = new <%= props.DTO %>({ ...body, <%= props.extra.params || "" %> })
+      return await this.service.execute(dto);
+    } catch (error) {
+      return this.exceptionController.handle(error)
+    }
+  }
+}
+
+
+
