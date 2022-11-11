@@ -10,7 +10,7 @@ services:
     environment:
       - MARIADB_ROOT_PASSWORD=12345678
     volumes:
-      - mariadbvolume:/var/lib/mysql
+      - maria-volume:/var/lib/mysql
 
 volumes:
-  mariadbvolume:
+  maria-volume:
